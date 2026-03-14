@@ -14,10 +14,21 @@ This project uses the [ODrive 0.5.4 Documentation](https://docs.odriverobotics.c
 
 ### Build Instructions (VS Code)
 1. **Open Workspace:** You must open the project using the `ODrive_Workspace.code-workspace` file. This ensures VS Code loads the correct path variables for the ODrive build system.
-2. **Run Build:** Press `Ctrl + Shift + B` to trigger the default build task (`make -j4`). Alternatively, pull down ...->Terminal->Run Build Task.
+2. **Run Build:** Press `Ctrl + Shift + B` to trigger the default build task (`tup`). Alternatively, pull down ...->Terminal->Run Build Task.
 3. **Output:** The compiled files (`.bin`, `.hex`, `.elf`) will be located in the `Firmware/build` folder.
 
 ### Build Instructions (Manual Terminal)
 If your terminal is configured with the correct paths, navigate to the `Firmware` directory and run:
 ```bash
-make -j4
+tup
+```
+
+## Single-Axis Clone Notes
+This firmware can be built for single-axis ODrive 3.6 clone hardware that does not populate axis1 (no second DRV/gate driver or current sense).
+
+- `AXIS_COUNT` is set to 1 in `Firmware/Board/v3/Inc/board.h`.
+- All axis1/motor1 paths in `Firmware/Board/v3/board.cpp` are guarded with `#if AXIS_COUNT > 1` to prevent invalid access.
+- The `axis1` API entry was removed from `Firmware/odrive-interface.yaml` so tools do not expose or touch it.
+- A forward declaration was added in `Firmware/MotorControl/encoder.hpp` to keep one-axis builds compiling cleanly.
+
+These changes prevent `MOTOR_ERROR_DRV_FAULT` on boards with no axis1 hardware and avoid control-loop hangs caused by out-of-range accesses in ISR paths.
