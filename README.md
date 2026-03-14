@@ -1,33 +1,34 @@
-## Important Note
+# ODrive 3.6 - AEAT9922 Firmware Integration
 
-The firmware in this repository is compatible with the ODrive v3.x (NRND) and is no longer under active development.
+This repository contains a modified version of the ODrive 3.6 firmware, specifically updated to support the **AEAT9922** magnetic encoder via SPI. This is part of the larger Encoder-Interpolator-Bridge project.
 
-Firmware for the new generation of ODrives ([ODrive Pro](https://odriverobotics.com/shop/odrive-pro), [S1](https://odriverobotics.com/shop/odrive-s1), [Micro](https://odriverobotics.com/shop/odrive-micro), etc.) is currently being actively maintained and developed, however its source code is currently not publicly available. Access may be available under NDA, please [reach out to us](mailto:info@odriverobotics.com) for inquiries.
+## 🛠 Building the Firmware
 
-## Overview
+This project uses the [ODrive 0.5.4 Documentation](https://docs.odriverobotics.com/v/0.5.4/configuring-vscode.html) standards for building and development.
 
-![ODrive Logo](https://static1.squarespace.com/static/58aff26de4fcb53b5efd2f02/t/59bf2a7959cc6872bd68be7e/1505700483663/Odrive+logo+plus+text+black.png?format=1000w)
+### Prerequisites
+1. **ARM GCC Toolchain:** [Download and install](https://developer.arm.com/tools-and-software/open-source-software-projects/gnu-toolchain/gnu-rm) the ARM embedded toolchain.
+2. **Tup:** Ensure `tup` is installed and added to your system PATH.
+3. **Environment Variable:** You must have a system environment variable named `ARM_GCC_ROOT` pointing to your toolchain folder.
+   * *Example:* `C:\Program Files (x86)\GNU Tools Arm Embedded\7 2018-q2-update`
 
-This project is all about accurately driving brushless motors, for cheap. The aim is to make it possible to use inexpensive brushless motors in high performance robotics projects, like [this](https://www.youtube.com/watch?v=WT4E5nb3KtY).
+### Build Instructions (VS Code)
+1. **Open Workspace:** You must open the project using the `ODrive_Workspace.code-workspace` file. This ensures VS Code loads the correct path variables for the ODrive build system.
+2. **Run Build:** Press `Ctrl + Shift + B` to trigger the default build task (`tup`). Alternatively, pull down ...->Terminal->Run Build Task.
+3. **Output:** The compiled files (`.bin`, `.hex`, `.elf`) will be located in the `Firmware/build` folder.
 
-| Branch | Build Status |
-|--------|--------------|
-| master | [![Build Status](https://travis-ci.org/madcowswe/ODrive.png?branch=master)](https://travis-ci.org/madcowswe/ODrive) |
-| devel  | [![Build Status](https://travis-ci.org/madcowswe/ODrive.png?branch=devel)](https://travis-ci.org/madcowswe/ODrive) |
+### Build Instructions (Manual Terminal)
+If your terminal is configured with the correct paths, navigate to the `Firmware` directory and run:
+```bash
+tup
+```
 
-[![pip install odrive (nightly)](https://github.com/madcowswe/ODrive/workflows/pip%20install%20odrive%20(nightly)/badge.svg)](https://github.com/madcowswe/ODrive/actions?query=workflow%3A%22pip+install+odrive+%28nightly%29%22)
+## Single-Axis Clone Notes
+This firmware can be built for single-axis ODrive 3.6 clone hardware that does not populate axis1 (no second DRV/gate driver or current sense).
 
-Please refer to the [Developer Guide](https://docs.odriverobotics.com/v/latest/developer-guide.html#) to get started with ODrive firmware development.
+- `AXIS_COUNT` is set to 1 in `Firmware/Board/v3/Inc/board.h`.
+- All axis1/motor1 paths in `Firmware/Board/v3/board.cpp` are guarded with `#if AXIS_COUNT > 1` to prevent invalid access.
+- The `axis1` API entry was removed from `Firmware/odrive-interface.yaml` so tools do not expose or touch it.
+- A forward declaration was added in `Firmware/MotorControl/encoder.hpp` to keep one-axis builds compiling cleanly.
 
-
-### Repository Structure
- * **Firmware**: ODrive firmware
- * **tools**: Python library & tools
- * **docs**: Documentation
-
-### Other Resources
-
- * [Main Website](https://www.odriverobotics.com/)
- * [User Guide](https://docs.odriverobotics.com/)
- * [Forum](https://discourse.odriverobotics.com/)
- * [Chat](https://discourse.odriverobotics.com/t/come-chat-with-us/281)
+These changes prevent `MOTOR_ERROR_DRV_FAULT` on boards with no axis1 hardware and avoid control-loop hangs caused by out-of-range accesses in ISR paths.
