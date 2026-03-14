@@ -1,23 +1,33 @@
-# ODrive 3.6 - AEAT9922 Firmware Integration
+## Important Note
 
-This repository contains a modified version of the ODrive 3.6 firmware, specifically updated to support the **AEAT9922** magnetic encoder via SPI. This is part of the larger Encoder-Interpolator-Bridge project.
+The firmware in this repository is compatible with the ODrive v3.x (NRND) and is no longer under active development.
 
-## 🛠 Building the Firmware
+Firmware for the new generation of ODrives ([ODrive Pro](https://odriverobotics.com/shop/odrive-pro), [S1](https://odriverobotics.com/shop/odrive-s1), [Micro](https://odriverobotics.com/shop/odrive-micro), etc.) is currently being actively maintained and developed, however its source code is currently not publicly available. Access may be available under NDA, please [reach out to us](mailto:info@odriverobotics.com) for inquiries.
 
-This project uses the [ODrive 0.5.4 Documentation](https://docs.odriverobotics.com/v/0.5.4/configuring-vscode.html) standards for building and development.
+## Overview
 
-### Prerequisites
-1. **ARM GCC Toolchain:** [Download and install](https://developer.arm.com/tools-and-software/open-source-software-projects/gnu-toolchain/gnu-rm) the ARM embedded toolchain.
-2. **Tup:** Ensure `tup` is installed and added to your system PATH.
-3. **Environment Variable:** You must have a system environment variable named `ARM_GCC_ROOT` pointing to your toolchain folder.
-   * *Example:* `C:\Program Files (x86)\GNU Tools Arm Embedded\7 2018-q2-update`
+![ODrive Logo](https://static1.squarespace.com/static/58aff26de4fcb53b5efd2f02/t/59bf2a7959cc6872bd68be7e/1505700483663/Odrive+logo+plus+text+black.png?format=1000w)
 
-### Build Instructions (VS Code)
-1. **Open Workspace:** You must open the project using the `ODrive_Workspace.code-workspace` file. This ensures VS Code loads the correct path variables for the ODrive build system.
-2. **Run Build:** Press `Ctrl + Shift + B` to trigger the default build task (`make -j4`). Alternatively, pull down ...->Terminal->Run Build Task.
-3. **Output:** The compiled files (`.bin`, `.hex`, `.elf`) will be located in the `Firmware/build` folder.
+This project is all about accurately driving brushless motors, for cheap. The aim is to make it possible to use inexpensive brushless motors in high performance robotics projects, like [this](https://www.youtube.com/watch?v=WT4E5nb3KtY).
 
-### Build Instructions (Manual Terminal)
-If your terminal is configured with the correct paths, navigate to the `Firmware` directory and run:
-```bash
-make -j4
+| Branch | Build Status |
+|--------|--------------|
+| master | [![Build Status](https://travis-ci.org/madcowswe/ODrive.png?branch=master)](https://travis-ci.org/madcowswe/ODrive) |
+| devel  | [![Build Status](https://travis-ci.org/madcowswe/ODrive.png?branch=devel)](https://travis-ci.org/madcowswe/ODrive) |
+
+[![pip install odrive (nightly)](https://github.com/madcowswe/ODrive/workflows/pip%20install%20odrive%20(nightly)/badge.svg)](https://github.com/madcowswe/ODrive/actions?query=workflow%3A%22pip+install+odrive+%28nightly%29%22)
+
+Please refer to the [Developer Guide](https://docs.odriverobotics.com/v/latest/developer-guide.html#) to get started with ODrive firmware development.
+
+
+### Repository Structure
+ * **Firmware**: ODrive firmware
+ * **tools**: Python library & tools
+ * **docs**: Documentation
+
+### Other Resources
+
+ * [Main Website](https://www.odriverobotics.com/)
+ * [User Guide](https://docs.odriverobotics.com/)
+ * [Forum](https://discourse.odriverobotics.com/)
+ * [Chat](https://discourse.odriverobotics.com/t/come-chat-with-us/281)
